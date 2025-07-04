@@ -14,13 +14,6 @@ app.use(express.json({ limit: "30mb" }));
 app.use(express.urlencoded({ limit: "30mb", extended: true }));
 app.use(cors());
 
-app.get('/',(req,res)=>{
-    res.send({
-        activeStatus:true,
-        error:false,
-    })
-})
-
 app.use('/posts', postRoutes);
 app.use("/user", userRouter);
 
