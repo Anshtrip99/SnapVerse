@@ -15,8 +15,9 @@ import {
 } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
 import useStyles from './styles';
-import decode  from 'jwt-decode';
-import SnapVerse from '../../images/memories.png';
+import decode from 'jwt-decode';
+import SnapVerse from '../../images/memoriesText.png';
+import SnapVerseLogo from '../../images/memoriesLogo.png';
 
 const Navbar = () => {
   const classes = useStyles();
@@ -31,9 +32,9 @@ const Navbar = () => {
 
   const logout = () => {
     dispatch({ type: 'LOGOUT' });
-    history.push('/');
     setUser(null);
     handleMenuClose();
+    history.push('/'); 
   };
 
   const handleMenuOpen = (event) => {
@@ -46,66 +47,66 @@ const Navbar = () => {
 
   useEffect(() => {
     const token = user?.token;
-    
-    
+
     if (token) {
       const decodedToken = decode(token);
       if (decodedToken.exp * 1000 < new Date().getTime()) logout();
     }
-    
-    setUser(JSON.parse(localStorage.getItem('profile')));
+
+    const profileData = localStorage.getItem('profile');
+    const parsedProfile = profileData ? JSON.parse(profileData) : null;
+    setUser(parsedProfile);
     setImageError(false);
   }, [location]);
 
-  
   const getProfileImageUrl = () => {
-    if (imageError) return null;
-    
+    if (imageError || !user?.result) return null;
+
     const possibleUrls = [
-      user?.result?.imageUrl,
       user?.result?.picture,
+      user?.result?.imageUrl,
       user?.result?.avatar,
       user?.result?.profilePicture,
-      user?.result?.photo
+      user?.result?.photo,
+      user?.result?.image?.url,
+      user?.result?.image,
     ];
-    
-    return possibleUrls.find(url => url) || null;
+
+    for (let url of possibleUrls) {
+      if (url && typeof url === 'string') {
+        if (url.includes('googleusercontent.com')) {
+          return url.replace(/=s\d+-c/, '').replace(/\?.*$/, '') + '?sz=96';
+        }
+        return url;
+      }
+    }
+
+    return null;
   };
 
-  const handleImageError = () => {
+  const handleImageError = (e) => {
+    console.log('Failed to load image:', e?.target?.src);
     setImageError(true);
   };
-
 
   const truncateName = (name, maxLength = 15) => {
     if (!name) return '';
     return name.length > maxLength ? `${name.substring(0, maxLength)}...` : name;
   };
 
+  const profileImageUrl = getProfileImageUrl();
+
   return (
     <AppBar className={classes.appBar} position="static" color="inherit">
-      <div className={classes.brandContainer}>
-        <Typography 
-          component={Link} 
-          to="/" 
-          className={classes.heading} 
-          variant={isMobile ? "h6" : "h5"}
-        >
-          SnapVerse
-        </Typography>
-        <img 
-          className={classes.image} 
-          src={SnapVerse} 
-          alt="icon" 
-          height={isMobile ? "40" : "60"} 
-        />
-      </div>
+      <Link to="/" className={classes.brandContainer}>
+        <img src={SnapVerse} alt="icon" height="45px" />
+        <img className={classes.image} src={SnapVerseLogo} alt="icon" height="40px" />
+      </Link>
       
       <Toolbar className={classes.toolbar}>
         {user ? (
           <div className={classes.profile}>
             {isMobile ? (
-             
               <>
                 <IconButton
                   edge="end"
@@ -115,10 +116,10 @@ const Navbar = () => {
                   <Avatar 
                     className={classes.purple} 
                     alt={user?.result?.name} 
-                    src={getProfileImageUrl()}
+                    src={profileImageUrl}
                     onError={handleImageError}
                   >
-                    {user?.result?.name?.charAt(0)}
+                    {user?.result?.name?.charAt(0)?.toUpperCase() || 'U'}
                   </Avatar>
                 </IconButton>
                 <Menu
@@ -126,43 +127,34 @@ const Navbar = () => {
                   keepMounted
                   open={Boolean(anchorEl)}
                   onClose={handleMenuClose}
-                  anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'right',
-                  }}
-                  transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                  }}
+                  anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                  transformOrigin={{ vertical: 'top', horizontal: 'right' }}
                 >
                   <MenuItem disabled>
                     <Typography variant="body2">
-                      {user.result.name}
+                      {user?.result?.name}
                     </Typography>
                   </MenuItem>
-                  <MenuItem onClick={logout}>
-                    Logout
-                  </MenuItem>
+                  <MenuItem onClick={logout}>Logout</MenuItem>
                 </Menu>
               </>
             ) : (
-            
               <div className={classes.profileContainer}>
                 <Avatar 
                   className={classes.purple} 
                   alt={user?.result?.name} 
-                  src={getProfileImageUrl()}
+                  src={profileImageUrl}
                   onError={handleImageError}
                 >
-                  {user?.result?.name?.charAt(0)}
+                  {user?.result?.name?.charAt(0)?.toUpperCase() || 'U'}
                 </Avatar>
                 <Box className={classes.userInfo}>
                   <Typography 
                     className={classes.userName} 
                     variant="body1"
-                    title={user.result.name} 
+                    title={user?.result?.name}
                   >
-                    {truncateName(user.result.name)}
+                    {truncateName(user?.result?.name)}
                   </Typography>
                 </Box>
                 <Button 
@@ -184,6 +176,7 @@ const Navbar = () => {
             variant="contained" 
             color="primary"
             size={isMobile ? "small" : "medium"}
+            onClick={() => history.push('/auth')}
           >
             Sign In
           </Button>

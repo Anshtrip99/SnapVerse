@@ -1,92 +1,75 @@
-import { makeStyles } from '@material-ui/core/styles'
-import { deepPurple } from '@material-ui/core/colors'
+import { makeStyles } from '@material-ui/core/styles';
+import { deepPurple } from '@material-ui/core/colors';
 
 export default makeStyles((theme) => ({
   appBar: {
     borderRadius: 15,
     margin: '30px 0',
+    padding: '10px 30px',
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: '10px 20px',
-    [theme.breakpoints.down('sm')]: {
+    [theme.breakpoints.down('xs')]: {
       flexDirection: 'column',
-      padding: '10px 15px',
-      margin: '20px 0',
+      alignItems: 'stretch',
+      gap: '10px',
     },
   },
-  heading: {
-    color: 'rgba(0,183,255, 1)',
+  brandContainer: {
+    display: 'flex',
+    alignItems: 'center',
     textDecoration: 'none',
-    fontSize: '2em',
-    fontWeight: 300,
-    [theme.breakpoints.down('sm')]: {
-      fontSize: '1.5em',
-    },
   },
   image: {
-    marginLeft: '15px',
-    [theme.breakpoints.down('sm')]: {
-      marginLeft: '10px',
-    },
+    marginLeft: '10px',
+    height: '40px',
   },
   toolbar: {
     display: 'flex',
     justifyContent: 'flex-end',
+    alignItems: 'center',
+    gap: '10px',
     width: 'auto',
-    [theme.breakpoints.down('sm')]: {
-      width: '100%',
+    [theme.breakpoints.down('xs')]: {
       justifyContent: 'center',
-      marginTop: '10px',
+      flexWrap: 'wrap',
     },
   },
   profile: {
     display: 'flex',
     alignItems: 'center',
-    width: 'auto',
   },
   profileContainer: {
     display: 'flex',
     alignItems: 'center',
-    gap: '10px',
-    maxWidth: '300px', // Prevent overflow
-    [theme.breakpoints.down('md')]: {
-      maxWidth: '200px',
+    gap: '24px', 
+    [theme.breakpoints.down('xs')]: {
+      flexDirection: 'column',
+      gap: '12px',
     },
   },
   userInfo: {
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'flex-start',
-    minWidth: 0, // Allow text to shrink
-    flex: 1,
+    justifyContent: 'center',
   },
   userName: {
-    fontWeight: 600,
+    fontWeight: 500,
+    fontSize: '1.05rem', 
+    maxWidth: '160px',
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
-    maxWidth: '100%',
-    cursor: 'default',
   },
-  brandContainer: {
-    display: 'flex',
-    alignItems: 'center',
-    [theme.breakpoints.down('sm')]: {
-      marginBottom: '10px',
-    },
+  logout: {
+    padding: '6px 14px',
+    marginLeft: '4px',
+    textTransform: 'none',
+    fontSize: '0.95rem', 
   },
   purple: {
     color: theme.palette.getContrastText(deepPurple[500]),
     backgroundColor: deepPurple[500],
-  },
-  logout: {
-    marginLeft: '10px',
-    whiteSpace: 'nowrap',
-    minWidth: 'auto',
-    [theme.breakpoints.down('sm')]: {
-      marginLeft: '5px',
-    },
   },
 }));
